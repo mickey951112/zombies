@@ -7,6 +7,9 @@ public class Gun : MonoBehaviour
     [SerializeField]
     Crosshair crosshair;
 
+    [SerializeField]
+    float bulletDamage;
+
     public void OnFire()
     {
         var ray = Camera.main.ScreenPointToRay(crosshair.transform.position);
@@ -16,7 +19,7 @@ public class Gun : MonoBehaviour
             var zombie = hit.collider.GetComponentInParent<Zombie>();
             if (zombie)
             {
-                Destroy(zombie.gameObject);
+                zombie.OnHit(bulletDamage, hit.collider, ray.direction, hit.point);
             }
             Debug.Log($"Hit {hit.collider.gameObject.name}");
         }

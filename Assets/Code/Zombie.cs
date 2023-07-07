@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class Zombie : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    float impuleForce;
+
+    public void OnHit(float damage, Collider collider, Vector3 bulletDirection, Vector3 hitPoint)
     {
-        
+        OnDeath(collider.gameObject, bulletDirection, hitPoint);
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnDeath(GameObject hitComponent, Vector3 bulletDirection, Vector3 hitPoint)
     {
-        
+        var bodies = GetComponentsInChildren<Rigidbody>();
+        foreach (var body in bodies)
+        {
+            body.isKinematic = false;
+            if (body.gameObject == hitComponent)
+            {
+                body.AddForceAtPosition(bulletDirection * impuleForce, hitPoint, ForceMode.Impulse);
+            }
+        }
     }
 }
