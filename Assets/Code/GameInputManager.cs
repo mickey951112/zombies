@@ -36,4 +36,16 @@ public class GameInputManager : MonoBehaviour
     {
         mainCharacterController.OnFire();
     }
+
+    public void OnRun(InputAction.CallbackContext context)
+    {
+        var isRunning = context.ReadValueAsButton();
+        mainCharacterController.OnRun(isRunning);
+    }
+
+    public void OnSlow(InputAction.CallbackContext context)
+    {
+        var isSlow = context.ReadValueAsButton();
+        mainCharacterController.OnSlow(isSlow);
+    }
 }

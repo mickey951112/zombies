@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,18 @@ public class MainCharacterController : MonoBehaviour
 
     Animator animator;
 
+    enum MovementStyle
+    {
+        Idle,
+        SlowWalk,
+        Walk,
+        Run,
+    }
+
+    bool isRunning;
+    bool isSlow;
+    float walkDirection;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -25,17 +38,10 @@ public class MainCharacterController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-    void Update()
-    {
-        // characterController.Move(transform.rotation * movement * Time.deltaTime);
-    }
-
     public void OnMove(Vector2 direction)
     {
-        // movement = new Vector3(direction.x, 0, direction.y) * moveSpeed;
-        animator.SetBool("IsWalking", direction.magnitude > 0);
-        Debug.Log($"OnMove: {direction}");
-        animator.SetFloat("Speed", direction.y);
+        this.walkDirection = direction.y;
+        UpdateMovementAnimation();
     }
 
     public void OnLookHorizontal(float rotateDirection)
@@ -46,5 +52,31 @@ public class MainCharacterController : MonoBehaviour
     public void OnFire()
     {
         gun.OnFire();
+    }
+
+    internal void OnRun(bool isRunning)
+    {
+        this.isRunning = isRunning;
+        UpdateMovementAnimation();
+    }
+
+    internal void OnSlow(bool isSlow)
+    {
+        this.isSlow = isSlow;
+        UpdateMovementAnimation();
+    }
+
+    void UpdateMovementAnimation()
+    {
+        var movementStyle =
+            walkDirection == 0
+                ? MovementStyle.Idle
+                : isRunning
+                    ? MovementStyle.Run
+                    : isSlow
+                        ? MovementStyle.SlowWalk
+                        : MovementStyle.Walk;
+        animator.SetInteger("MovementStyle", (int)movementStyle);
+        animator.SetFloat("Speed", walkDirection);
     }
 }
