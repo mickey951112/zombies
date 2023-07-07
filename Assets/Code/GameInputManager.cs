@@ -11,6 +11,11 @@ public class GameInputManager : MonoBehaviour
     [SerializeField]
     CameraController cameraController;
 
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
         var direction = context.ReadValue<Vector2>();

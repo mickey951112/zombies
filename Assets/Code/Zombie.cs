@@ -14,6 +14,10 @@ public class Zombie : MonoBehaviour
 
     void OnDeath(GameObject hitComponent, Vector3 bulletDirection, Vector3 hitPoint)
     {
+        Debug.Log($"Zombie died from {hitComponent.name} shot");
+
+        var animator = GetComponent<Animator>();
+        animator.enabled = false;
         var bodies = GetComponentsInChildren<Rigidbody>();
         foreach (var body in bodies)
         {

@@ -21,7 +21,6 @@ public class Gun : MonoBehaviour
             {
                 zombie.OnHit(bulletDamage, hit.collider, ray.direction, hit.point);
             }
-            Debug.Log($"Hit {hit.collider.gameObject.name}");
         }
     }
 }

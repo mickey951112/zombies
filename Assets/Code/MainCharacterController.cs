@@ -20,8 +20,6 @@ public class MainCharacterController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         gun = GetComponent<Gun>();
-
-        Cursor.visible = false;
     }
 
     void Update()
