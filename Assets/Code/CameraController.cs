@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
@@ -41,10 +40,8 @@ public class CameraController : MonoBehaviour
         transform.LookAt(lookAtTarget);
     }
 
-    public void OnLook(InputAction.CallbackContext context)
+    public void OnLookVertical(float verticalDirection)
     {
-        var direction = context.ReadValue<Vector2>();
-        var verticalDirection = direction.y;
         defaultCameraHeight += verticalDirection * verticalChangeSpeed;
         defaultCameraHeight = Mathf.Clamp(defaultCameraHeight, minCameraHeight, maxCameraHeight);
         crosshair.OnCameraMove(

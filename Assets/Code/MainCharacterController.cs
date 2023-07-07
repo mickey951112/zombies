@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class MainCharacterController : MonoBehaviour
 {
@@ -26,16 +25,13 @@ public class MainCharacterController : MonoBehaviour
         characterController.Move(transform.rotation * movement * Time.deltaTime);
     }
 
-    public void OnMove(InputAction.CallbackContext context)
+    public void OnMove(Vector2 direction)
     {
-        var direction = context.ReadValue<Vector2>();
         movement = new Vector3(direction.x, 0, direction.y) * moveSpeed;
     }
 
-    public void OnLook(InputAction.CallbackContext context)
+    public void OnLookHorizontal(float rotateDirection)
     {
-        var direction = context.ReadValue<Vector2>();
-        var rotateDirection = direction.x;
         transform.Rotate(0, rotateDirection * rotationSpeed, 0);
     }
 }
