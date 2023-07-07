@@ -16,20 +16,26 @@ public class MainCharacterController : MonoBehaviour
 
     Gun gun;
 
+    Animator animator;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
         gun = GetComponent<Gun>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        characterController.Move(transform.rotation * movement * Time.deltaTime);
+        // characterController.Move(transform.rotation * movement * Time.deltaTime);
     }
 
     public void OnMove(Vector2 direction)
     {
-        movement = new Vector3(direction.x, 0, direction.y) * moveSpeed;
+        // movement = new Vector3(direction.x, 0, direction.y) * moveSpeed;
+        animator.SetBool("IsWalking", direction.magnitude > 0);
+        Debug.Log($"OnMove: {direction}");
+        animator.SetFloat("Speed", direction.y);
     }
 
     public void OnLookHorizontal(float rotateDirection)
