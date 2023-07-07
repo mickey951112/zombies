@@ -14,9 +14,13 @@ public class MainCharacterController : MonoBehaviour
 
     Vector3 movement;
 
+    Gun gun;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
+        gun = GetComponent<Gun>();
+
         Cursor.visible = false;
     }
 
@@ -33,5 +37,10 @@ public class MainCharacterController : MonoBehaviour
     public void OnLookHorizontal(float rotateDirection)
     {
         transform.Rotate(0, rotateDirection * rotationSpeed, 0);
+    }
+
+    public void OnFire()
+    {
+        gun.OnFire();
     }
 }

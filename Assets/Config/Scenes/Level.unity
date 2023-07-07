@@ -370,6 +370,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: e64c6652-40a9-4fd4-82b9-442095a31397
     m_ActionName: CharacterControl/Look[/Mouse/delta]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 407967081}
+        m_TargetAssemblyTypeName: GameInputManager, Assembly-CSharp
+        m_MethodName: OnFire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 09161e6b-e96a-49a7-8ade-c5beb29a63df
+    m_ActionName: CharacterControl/Fire[/Mouse/leftButton,/XInputControllerWindows/rightTrigger]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: CharacterControl

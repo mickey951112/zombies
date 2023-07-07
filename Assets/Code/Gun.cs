@@ -7,7 +7,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     Crosshair crosshair;
 
-    void Update()
+    public void OnFire()
     {
         var ray = Camera.main.ScreenPointToRay(crosshair.transform.position);
         Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 2);

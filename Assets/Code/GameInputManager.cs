@@ -26,4 +26,9 @@ public class GameInputManager : MonoBehaviour
         var verticalDirection = direction.y;
         cameraController.OnLookVertical(verticalDirection);
     }
+
+    public void OnFire(InputAction.CallbackContext context)
+    {
+        mainCharacterController.OnFire();
+    }
 }
