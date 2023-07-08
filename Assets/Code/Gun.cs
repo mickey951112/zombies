@@ -10,8 +10,19 @@ public class Gun : MonoBehaviour
     [SerializeField]
     float bulletDamage;
 
+    [SerializeField]
+    float fireRate;
+
+    float lastFireTime;
+
     public void OnFire()
     {
+        if (Time.time - lastFireTime < fireRate)
+        {
+            return;
+        }
+        lastFireTime = Time.time;
+
         var ray = Camera.main.ScreenPointToRay(crosshair.transform.position);
         Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 2);
         if (Physics.Raycast(ray, out var hit))
