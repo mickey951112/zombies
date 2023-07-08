@@ -30,6 +30,7 @@ public class MainCharacterController : MonoBehaviour
     bool isRunning;
     bool isSlow;
     float walkDirection;
+    float sideStepDirection;
 
     void Start()
     {
@@ -41,6 +42,8 @@ public class MainCharacterController : MonoBehaviour
     public void OnMove(Vector2 direction)
     {
         this.walkDirection = direction.y;
+        this.sideStepDirection = direction.x;
+
         UpdateMovementAnimation();
     }
 
@@ -69,14 +72,26 @@ public class MainCharacterController : MonoBehaviour
     void UpdateMovementAnimation()
     {
         var movementStyle =
-            walkDirection == 0
+            walkDirection == 0 && sideStepDirection == 0
                 ? MovementStyle.Idle
                 : isRunning
                     ? MovementStyle.Run
                     : isSlow
                         ? MovementStyle.SlowWalk
                         : MovementStyle.Walk;
+
         animator.SetInteger("MovementStyle", (int)movementStyle);
-        animator.SetFloat("Speed", walkDirection);
+
+        var isSideStepping = sideStepDirection != 0;
+        animator.SetBool("IsSideStepping", isSideStepping);
+        if (isSideStepping)
+        {
+            animator.SetBool("MirrorAnimation", sideStepDirection < 0);
+            animator.SetFloat("AnimationSpeed", Mathf.Abs(sideStepDirection));
+        }
+        else
+        {
+            animator.SetFloat("AnimationSpeed", walkDirection);
+        }
     }
 }
