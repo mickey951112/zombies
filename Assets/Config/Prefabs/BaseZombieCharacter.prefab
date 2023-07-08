@@ -1023,6 +1023,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   impuleForce: 50
+  health: 25
 --- !u!1 &5316456157628892118 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1012023735394472714, guid: 324564a66c363af4b9ef84dfb10a8589, type: 3}

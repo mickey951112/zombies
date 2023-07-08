@@ -15,6 +15,9 @@ public class Gun : MonoBehaviour
 
     float lastFireTime;
 
+    [SerializeField]
+    AudioClip fireSound;
+
     public void OnFire()
     {
         if (Time.time - lastFireTime < fireRate)

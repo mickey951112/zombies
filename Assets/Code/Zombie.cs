@@ -9,6 +9,9 @@ public class Zombie : MonoBehaviour
 
     Animator animator;
 
+    [SerializeField]
+    float health;
+
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -24,7 +27,24 @@ public class Zombie : MonoBehaviour
 
     public void OnHit(float damage, Collider collider, Vector3 bulletDirection, Vector3 hitPoint)
     {
-        OnDeath(collider.gameObject, bulletDirection, hitPoint);
+        health -= damage;
+        if (health <= 0)
+        {
+            OnDeath(collider.gameObject, bulletDirection, hitPoint);
+        }
+        else
+        {
+            OnHit(collider.gameObject);
+        }
+    }
+
+    private void OnHit(GameObject hitComponent)
+    {
+        if (hitComponent.name == "Head")
+        {
+            animator.SetTrigger("Head Shot");
+            Debug.Log("Headshot!");
+        }
     }
 
     void OnDeath(GameObject hitComponent, Vector3 bulletDirection, Vector3 hitPoint)
