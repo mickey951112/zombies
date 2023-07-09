@@ -8,7 +8,7 @@ public class CameraController : MonoBehaviour
     Transform mainCharacter;
 
     [SerializeField]
-    float distanceFromCharacter;
+    Vector3 distanceFromCharacter;
 
     [SerializeField]
     float defaultCameraHeight;
@@ -32,7 +32,7 @@ public class CameraController : MonoBehaviour
     {
         transform.position =
             mainCharacter.position
-            - mainCharacter.forward * distanceFromCharacter
+            - mainCharacter.rotation * distanceFromCharacter
             + Vector3.up * defaultCameraHeight;
         var lookAtTarget =
             mainCharacter.position

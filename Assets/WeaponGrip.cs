@@ -24,40 +24,79 @@ public class WeaponGrip : MonoBehaviour
 
     [SerializeField]
     Vector3 maxRecoilPosition;
+    ItemGun itemGun;
 
     void Awake()
     {
         animator = GetComponent<Animator>();
         Gun gun = GetComponent<Gun>();
         gun.OnShotFired += OnShotFired;
+        itemGun = GetComponentInChildren<ItemGun>();
     }
+
+    Quaternion previousIKRotation;
+
+    // void Update()
+    // {
+    //     rightHand.rotation =
+    //         Quaternion.LookRotation((lookAt - rightHand.transform.position).normalized)
+    //         * Quaternion.Euler(new Vector3(0, 90, 90));
+    // }
+
+    public Vector3 testOffsetRotation;
 
     void OnAnimatorIK()
     {
-        animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-        animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
+        // animator.enabled = false;
+
+        animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
         animator.SetIKPosition(
             AvatarIKGoal.RightHand,
             getRecoilPosition(weaponRestingLocation.position)
         );
+
+        float rotationLerpSpeed = 10f * Time.deltaTime;
+        previousIKRotation = Quaternion.LookRotation(
+            (lookAt - itemGun.transform.position).normalized
+        );
+        Debug.Log(
+            $"previousIKRotation: {previousIKRotation.eulerAngles} vs {rightHand.rotation.eulerAngles} local {rightHand.localRotation.eulerAngles}"
+        );
+        // * Quaternion.Inverse(transform.rotation);
+        // Quaternion.Lerp(
+        //     previousIKRotation,
+        //     Quaternion.LookRotation((lookAt - itemGun.transform.position).normalized)
+        //         * Quaternion.Inverse(transform.rotation),
+        //     rotationLerpSpeed
+        // );
+
+        animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
+        // rightHand.rotation = previousIKRotation;
         animator.SetIKRotation(
             AvatarIKGoal.RightHand,
-            getRecoilRotation(
-                weaponRestingLocation.rotation * Quaternion.Euler(weaponRestingRotation)
-            )
+            Quaternion.LookRotation((lookAt - rightHand.transform.position).normalized)
+                * Quaternion.Euler(new Vector3(0, 90, 90))
+                * Quaternion.Euler(new Vector3(-90, 90, 90))
+                * Quaternion.Euler(testOffsetRotation)
+        // getRecoilRotation(
+
+        // previousIKRotation //* transform.rotation
+        // * Quaternion.Euler(weaponRestingRotation)
+        // )
         );
+
+        animator.SetLookAtWeight(1);
+        animator.SetLookAtPosition(lookAt);
     }
 
     public void OnShotFired()
     {
-        Debug.Log("OnShotFired()");
         recoilProgress = 0;
         returnProgress = 0;
         recoilMaxRotation =
             weaponRestingLocation.rotation
             * Quaternion.Euler(weaponRestingRotation)
             * Quaternion.Euler(0, -30, 0);
-        // Right for up?, left is down? forward crossbody left
         recoilMaxPosition =
             weaponRestingLocation.position
             + weaponRestingLocation.rotation
@@ -67,9 +106,11 @@ public class WeaponGrip : MonoBehaviour
 
     float recoilTime = 0.05f;
     float returnTime = 0.2f;
+    public Vector3 lookAt;
 
     private Quaternion getRecoilRotation(Quaternion currentRotation)
     {
+        return currentRotation;
         recoilProgress += Time.deltaTime;
 
         var recoilSpeed = recoilTime / 2;
@@ -98,6 +139,7 @@ public class WeaponGrip : MonoBehaviour
 
     private Vector3 getRecoilPosition(Vector3 currentPosition)
     {
+        return currentPosition;
         if (recoilProgress < recoilTime)
         {
             return Vector3.Lerp(currentPosition, recoilMaxPosition, recoilProgress / recoilTime);
