@@ -36,6 +36,8 @@ public class Zombie : MonoBehaviour
         {
             OnHit(collider.gameObject);
         }
+
+        GetComponent<BloodEffects>().OnHit(collider.transform, hitPoint, bulletDirection);
     }
 
     private void OnHit(GameObject hitComponent)
