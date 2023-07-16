@@ -43,14 +43,11 @@ public class Zombie : MonoBehaviour
         if (hitComponent.name == "Head")
         {
             animator.SetTrigger("Head Shot");
-            Debug.Log("Headshot!");
         }
     }
 
     void OnDeath(GameObject hitComponent, Vector3 bulletDirection, Vector3 hitPoint)
     {
-        Debug.Log($"Zombie died from {hitComponent.name} shot");
-
         animator.enabled = false;
         var bodies = GetComponentsInChildren<Rigidbody>();
         foreach (var body in bodies)

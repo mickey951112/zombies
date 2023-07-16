@@ -37,35 +37,27 @@ public class Gun : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction * 10000, Color.red);
         if (Physics.Raycast(ray, out var hit))
         {
-            // DebugDraw.xAtPoint(ray.direction, hit.point, Color.red);
             weaponGrip.lookAt = hit.point;
         }
         else
         {
             weaponGrip.lookAt = ray.origin + ray.direction * 1000;
         }
-
-        OnFire();
     }
 
     public void OnFire()
     {
-        // if (Time.time - lastFireTime < fireRate)
-        // {
-        //     return;
-        // }
+        if (Time.time - lastFireTime < fireRate)
+        {
+            return;
+        }
         lastFireTime = Time.time;
 
-        // shootSound.Play();
+        shootSound.Play();
 
-        // var ray = Camera.main.ScreenPointToRay(crosshair.transform.position);
-        // Debug.DrawRay(ray.origin, ray.direction * 100, Color.red, 2);
-        // if (Physics.Raycast(ray, out var hit))
-        // {
         var ray = new Ray(itemGun.transform.position, itemGun.transform.forward);
         DebugDraw.xAtPoint(ray.direction, weaponGrip.lookAt, Color.red);
 
-        // Debug.DrawRay(ray.origin, ray.direction * 10000, Color.blue);
         if (Physics.Raycast(ray, out var hit))
         {
             DebugDraw.xAtPoint(ray.direction, hit.point, Color.blue);
@@ -76,7 +68,6 @@ public class Gun : MonoBehaviour
                 zombie.OnHit(bulletDamage, hit.collider, ray.direction, hit.point);
             }
         }
-        // }
 
         OnShotFired();
     }
