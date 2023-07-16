@@ -18,8 +18,10 @@ public class WeaponGrip : MonoBehaviour
     float recoilProgress = 100f;
     float returnProgress = 100f;
 
-    Quaternion recoilMaxRotation;
+    [SerializeField]
+    Vector3 recoilMaxRotation;
 
+    [SerializeField]
     Vector3 recoilMaxPosition;
 
     [SerializeField]
@@ -46,7 +48,8 @@ public class WeaponGrip : MonoBehaviour
     void OnAnimatorIK()
     {
         animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
-        var targetPosition = getRecoilPosition(weaponRestingLocation.position);
+        var targetPosition =
+            weaponRestingLocation.position + transform.rotation * getRecoilPosition();
         animator.SetIKPosition(AvatarIKGoal.RightHand, targetPosition);
 
         float rotationLerpSpeed = 10f * Time.deltaTime;
@@ -55,7 +58,8 @@ public class WeaponGrip : MonoBehaviour
         animator.SetBoneLocalRotation(
             HumanBodyBones.RightIndexProximal,
             Quaternion.Inverse(cachedRightFingerRotation)
-                * getRecoilRotation(targetRotation)
+                * targetRotation
+                * getRecoilRotation()
                 * Quaternion.Euler(aimOffsetRotation)
         );
 
@@ -72,25 +76,20 @@ public class WeaponGrip : MonoBehaviour
     {
         recoilProgress = 0;
         returnProgress = 0;
-        var targetPosition = getRecoilPosition(weaponRestingLocation.position);
-        var targetRotation = Quaternion.LookRotation((lookAt - targetPosition).normalized);
-        recoilMaxRotation =
-            Quaternion.Euler(0, 0, 0) * targetRotation * Quaternion.Euler(aimOffsetRotation);
-        recoilMaxPosition =
-            weaponRestingLocation.position
-            + weaponRestingLocation.rotation
-                * Quaternion.Euler(aimOffsetRotation)
-                * maxRecoilPosition;
     }
 
-    private Quaternion getRecoilRotation(Quaternion targetRotation)
+    private Quaternion getRecoilRotation()
     {
         recoilProgress += Time.deltaTime;
 
         var recoilSpeed = recoilTime / 2;
         if (recoilProgress < recoilTime)
         {
-            return Quaternion.Lerp(targetRotation, recoilMaxRotation, recoilProgress / recoilSpeed);
+            return Quaternion.Lerp(
+                Quaternion.identity,
+                Quaternion.Euler(recoilMaxRotation),
+                recoilProgress / recoilSpeed
+            );
         }
 
         returnProgress += Time.deltaTime;
@@ -98,23 +97,27 @@ public class WeaponGrip : MonoBehaviour
         var returnSpeed = returnTime / 2;
         if (returnProgress < returnTime)
         {
-            return Quaternion.Lerp(recoilMaxRotation, targetRotation, returnProgress / returnSpeed);
+            return Quaternion.Lerp(
+                Quaternion.Euler(recoilMaxRotation),
+                Quaternion.identity,
+                returnProgress / returnSpeed
+            );
         }
-        return targetRotation;
+        return Quaternion.identity;
     }
 
-    private Vector3 getRecoilPosition(Vector3 currentPosition)
+    private Vector3 getRecoilPosition()
     {
         if (recoilProgress < recoilTime)
         {
-            return Vector3.Lerp(currentPosition, recoilMaxPosition, recoilProgress / recoilTime);
+            return Vector3.Lerp(Vector3.zero, recoilMaxPosition, recoilProgress / recoilTime);
         }
 
         if (returnProgress < returnTime)
         {
-            return Vector3.Lerp(recoilMaxPosition, currentPosition, returnProgress / returnTime);
+            return Vector3.Lerp(recoilMaxPosition, Vector3.zero, returnProgress / returnTime);
         }
 
-        return currentPosition;
+        return Vector3.zero;
     }
 }
