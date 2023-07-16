@@ -65,7 +65,7 @@ public class Gun : MonoBehaviour
         var ray = new Ray(itemGun.transform.position, itemGun.transform.forward);
         DebugDraw.xAtPoint(ray.direction, weaponGrip.lookAt, Color.red);
 
-        Debug.DrawRay(ray.origin, ray.direction * 10000, Color.blue);
+        // Debug.DrawRay(ray.origin, ray.direction * 10000, Color.blue);
         if (Physics.Raycast(ray, out var hit))
         {
             DebugDraw.xAtPoint(ray.direction, hit.point, Color.blue);
