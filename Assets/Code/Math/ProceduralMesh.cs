@@ -24,7 +24,7 @@ public class ProceduralMesh
         meshDataArray = Mesh.AllocateWritableMeshData(1);
         var meshData = meshDataArray[0];
         var attributeDescriptors = new NativeArray<VertexAttributeDescriptor>(
-            length: 2,
+            length: 3,
             Allocator.Temp,
             NativeArrayOptions.UninitializedMemory
         );
@@ -34,6 +34,11 @@ public class ProceduralMesh
             dimension: 3
         );
         attributeDescriptors[1] = new VertexAttributeDescriptor(
+            VertexAttribute.Normal,
+            VertexAttributeFormat.Float32,
+            dimension: 3
+        );
+        attributeDescriptors[2] = new VertexAttributeDescriptor(
             VertexAttribute.TexCoord0,
             VertexAttributeFormat.Float16,
             dimension: 2

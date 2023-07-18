@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,28 +11,103 @@ public class SkinnedMeshSlicer : MonoBehaviour
 
         var cutParts = new GameObject($"{gameObject.name}: Cut Parts");
         cutParts.transform.SetPositionAndRotation(
-            parentGameObject.transform.position,
-            parentGameObject.transform.rotation
-        );
-
-        var hitComponentClone = Instantiate(
-            hitComponent,
             hitComponent.transform.position,
-            hitComponent.transform.rotation,
-            hitComponent.transform.parent
+            hitComponent.transform.rotation
         );
+        cutParts.transform.localScale = hitComponent.transform.lossyScale;
+        var cutRenderer = cutParts.AddComponent<MeshRenderer>();
+        var meshFilter = cutParts.AddComponent<MeshFilter>();
 
-        for (
-            var childIndex = hitComponentClone.transform.childCount - 1;
-            childIndex >= 0;
-            childIndex--
-        )
+        var renderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        cutRenderer.sharedMaterial = parentGameObject
+            .GetComponentInChildren<SkinnedMeshRenderer>()
+            .sharedMaterial;
+        var mesh = GetComponentInChildren<SkinnedMeshRenderer>().sharedMesh;
+        var trigs = mesh.triangles; // 4812
+        var verts = mesh.vertices; // 1029
+
+        Transform hitBone = null;
+        int hitBoneIndex = -1;
+        for (var index = 0; index < renderer.bones.Length; index++)
         {
-            Destroy(hitComponentClone.transform.GetChild(childIndex).gameObject);
+            hitBone = renderer.bones[index];
+            if (hitBone == hitComponent.transform)
+            {
+                hitBoneIndex = index;
+                break;
+            }
         }
-        hitComponent.transform.SetParent(cutParts.transform);
+        Debug.Log($"found bone {hitBone.name} at index {hitBoneIndex}");
+        Debug.Log(renderer.rootBone.position);
 
-        // Not helping
-        // hitComponent.GetComponent<Rigidbody>().useGravity = false;
+        var impactedVertexIndex = new List<int>();
+        for (var index = 0; index < verts.Length; index++)
+        {
+            var vert = verts[index];
+            var boneWeight = mesh.boneWeights[index];
+            if (boneWeight.boneIndex0 == hitBoneIndex)
+            {
+                impactedVertexIndex.Add(index);
+            }
+            // Head does not weight other than on index 0, when would these apply.
+            // else if (boneWeight.boneIndex1 == hitBoneIndex)
+            // {
+            //     count++;
+            // }
+            // else if (boneWeight.boneIndex2 == hitBoneIndex)
+            // {
+            //     count++;
+            // }
+            // else if (boneWeight.boneIndex3 == hitBoneIndex)
+            // {
+            //     count++;
+            // }
+        }
+
+        var impactedTrigs = new List<(int, int, int)>();
+        for (var index = 0; index < trigs.Length; index += 3)
+        {
+            var trig1 = trigs[index];
+            var trig2 = trigs[index + 1];
+            var trig3 = trigs[index + 2];
+            if (
+                impactedVertexIndex.Contains(trig1)
+                && impactedVertexIndex.Contains(trig2)
+                && impactedVertexIndex.Contains(trig3)
+            )
+            {
+                impactedTrigs.Add((trig1, trig2, trig3));
+            }
+        }
+        Debug.Log(
+            $"found {impactedVertexIndex.Count} verts in bone {hitBone.name} with {impactedTrigs.Count} trigs"
+        );
+        var proceduralMesh = new ProceduralMesh(
+            "Cut Parts",
+            vertexCount: impactedVertexIndex.Count,
+            triangleCount: impactedTrigs.Count
+        );
+        var mappedVertexIndex = new Dictionary<int, UInt16>();
+        foreach (var vertex in impactedVertexIndex)
+        {
+            var index = proceduralMesh.AddVertex(
+                (verts[vertex], mesh.uv[vertex], mesh.normals[vertex])
+            );
+            mappedVertexIndex.Add(vertex, index);
+        }
+        foreach (var trig in impactedTrigs)
+        {
+            proceduralMesh.AddTriagle(
+                mappedVertexIndex[trig.Item1],
+                mappedVertexIndex[trig.Item2],
+                mappedVertexIndex[trig.Item3]
+            );
+        }
+        proceduralMesh.Draw(meshFilter);
+
+        // for (var childIndex = hitComponent.transform.childCount - 1; childIndex >= 0; childIndex--)
+        // {
+        //     Destroy(hitComponent.transform.GetChild(childIndex).gameObject);
+        // }
     }
 }
