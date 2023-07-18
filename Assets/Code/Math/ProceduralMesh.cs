@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using Unity.Collections;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Rendering;
@@ -13,6 +14,8 @@ public class ProceduralMesh
     NativeArray<UInt16> triagleVertices;
     int vertexIndex;
     int triagleIndex;
+    float3 minVertex = float3.zero;
+    float3 maxVertex = float3.zero;
 
     public ProceduralMesh(string name, int vertexCount, int triangleCount)
     {
@@ -50,6 +53,19 @@ public class ProceduralMesh
     public UInt16 AddVertex(Vertex vertex)
     {
         vertexArray[vertexIndex] = vertex;
+        if (vertexIndex == 0)
+        {
+            minVertex = maxVertex = vertex.position;
+        }
+        else
+        {
+            minVertex.x = math.min(minVertex.x, vertex.position.x);
+            minVertex.y = math.min(minVertex.y, vertex.position.y);
+            minVertex.z = math.min(minVertex.z, vertex.position.z);
+            maxVertex.x = math.max(maxVertex.x, vertex.position.x);
+            maxVertex.y = math.max(maxVertex.y, vertex.position.y);
+            maxVertex.z = math.max(maxVertex.z, vertex.position.z);
+        }
         return (UInt16)vertexIndex++;
     }
 
@@ -68,8 +84,8 @@ public class ProceduralMesh
 
         Mesh.ApplyAndDisposeWritableMeshData(meshDataArray, mesh);
 
-        // TODO set bounds
-        var bounds = new Bounds(new Vector3(0.5f, 0.5f, -0.5f), Vector3.one);
+        var bounds = new Bounds(center: (minVertex + maxVertex) / 2, size: maxVertex - minVertex);
+
         mesh.SetSubMesh(
             index: 0,
             new SubMeshDescriptor(indexStart: 0, indexCount: triagleVertices.Length)

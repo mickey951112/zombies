@@ -11,9 +11,6 @@ public struct Vertex
 
     public Vertex(float3 position, half2 uv)
     {
-        Assert.IsTrue(uv.x >= 0f && uv.x <= 1f);
-        Assert.IsTrue(uv.y >= 0f && uv.y <= 1f);
-
         this.position = position;
         this.uv = uv;
     }
