@@ -67,6 +67,26 @@ public class Gun : MonoBehaviour
             {
                 zombie.OnHit(bulletDamage, hit.collider, ray.direction, hit.point);
             }
+
+            // Testing the slicer
+            // var slicer = hit.collider.GetComponentInParent<SkeletonMeshSlicer>();
+            // Debug.Log(hit.collider.name);
+            // if (slicer)
+            // {
+            //     slicer.SliceByMeshPlane(
+            //         Quaternion.Euler(0, 90, 0) * ray.direction,
+            //         hit.point,
+            //         null
+            //     );
+            // }
+
+            // Test custom slicer
+            var customSlicer = hit.collider.GetComponentInParent<SkinnedMeshSlicer>();
+            Debug.Log(hit.collider.name);
+            if (customSlicer)
+            {
+                customSlicer.Slice(hit.collider.gameObject, hit.point);
+            }
         }
 
         OnShotFired();
