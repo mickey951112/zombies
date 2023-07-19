@@ -82,7 +82,7 @@ public class ProceduralMesh
         triagleVertices[triagleIndex++] = c;
     }
 
-    public void Draw(MeshFilter meshFilter)
+    public Mesh Draw()
     {
         Assert.IsTrue(vertexIndex == vertexArray.Length);
         Assert.IsTrue(triagleIndex == triagleVertices.Length);
@@ -103,6 +103,6 @@ public class ProceduralMesh
         mesh.bounds = bounds;
 
         mesh.Optimize();
-        meshFilter.mesh = mesh;
+        return mesh;
     }
 }

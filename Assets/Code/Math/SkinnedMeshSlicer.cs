@@ -5,6 +5,11 @@ using UnityEngine;
 
 /* TODO
  * consider skinned mesh so that we can ragdoll the cut parts
+   * requires we add bone transforms and weights to the cut parts
+   * copy joints in order to ragdoll the cut parts
+
+
+   rigidbody and collider per impacted bone
 */
 public class SkinnedMeshSlicer : MonoBehaviour
 {
@@ -22,8 +27,10 @@ public class SkinnedMeshSlicer : MonoBehaviour
             hitComponent.transform.rotation
         );
         cutParts.transform.localScale = hitComponent.transform.lossyScale;
-        var cutRenderer = cutParts.AddComponent<MeshRenderer>();
-        var meshFilter = cutParts.AddComponent<MeshFilter>();
+        // TODO we need to clone the collider in order to ragdoll the parts
+        // var cutBody = cutParts.AddComponent<Rigidbody>();
+        // TODO consider cloning the rigidbody config from the parts we got?
+        var cutRenderer = cutParts.AddComponent<SkinnedMeshRenderer>();
 
         var renderer = GetComponentInChildren<SkinnedMeshRenderer>();
         cutRenderer.sharedMaterial = parentGameObject
@@ -109,7 +116,7 @@ public class SkinnedMeshSlicer : MonoBehaviour
                 mappedVertexIndex[trig.Item3]
             );
         }
-        proceduralMesh.Draw(meshFilter);
+        cutRenderer.sharedMesh = proceduralMesh.Draw();
 
         // for (var childIndex = hitComponent.transform.childCount - 1; childIndex >= 0; childIndex--)
         // {

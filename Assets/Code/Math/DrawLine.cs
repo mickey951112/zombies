@@ -21,6 +21,6 @@ public class DrawLine : MonoBehaviour
         mesh.AddTriagle(rightBottomFront, rightBottomBack, rightTopFront);
         mesh.AddTriagle(rightTopFront, rightBottomBack, rightTopBack);
 
-        mesh.Draw(GetComponent<MeshFilter>());
+        GetComponent<MeshFilter>().mesh = mesh.Draw();
     }
 }
