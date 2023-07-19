@@ -10,7 +10,8 @@ using UnityEngine;
 
 
    rigidbody and collider per impacted bone
-   bone transforms
+   
+   x bone transforms
    bone component (joint, rigidbody, collider)
     bone weights
 */
@@ -25,10 +26,24 @@ public class SkinnedMeshSlicer : MonoBehaviour
 
     public void Slice(GameObject hitComponent, Vector3 hitPosition)
     {
+        // Create cut parts
+        (var cutParts, var cutRenderer) = GameObjectHelpers.Create<SkinnedMeshRenderer>(
+            $"{gameObject.name}: Cut Parts",
+            hitComponent.transform.position,
+            hitComponent.transform.rotation,
+            hitComponent.transform.lossyScale
+        );
+        cutRenderer.sharedMaterial = skinnedMeshRenderer.sharedMaterial;
+
+        // Add bone transforms
+        var impactedBoneTransforms = hitComponent.transform.CloneChildrenTo(
+            true,
+            cutParts.transform
+        );
+
         // Gather details
         var mesh = skinnedMeshRenderer.sharedMesh; // TODO remove temp?
 
-        var impactedBoneTransforms = hitComponent.transform.CreateListOfChildren(true);
         var hitBoneIndices = skinnedMeshRenderer.MapBonesToBoneIndexes(impactedBoneTransforms);
         var impactedVertexIndices = mesh.GetImpactedVertexIndices(hitBoneIndices);
         var impactedTrigs = mesh.GetImpactedTriangles(impactedVertexIndices);
@@ -55,28 +70,7 @@ public class SkinnedMeshSlicer : MonoBehaviour
             );
         }
 
-        // Create cut parts
-        (var cutParts, var cutRenderer) = GameObjectHelpers.Create<SkinnedMeshRenderer>(
-            $"{gameObject.name}: Cut Parts",
-            hitComponent.transform.position,
-            hitComponent.transform.rotation,
-            hitComponent.transform.lossyScale
-        );
-        cutRenderer.sharedMaterial = skinnedMeshRenderer.sharedMaterial;
         cutRenderer.sharedMesh = proceduralMesh.Draw();
-
-        // Add bone transforms
-        foreach (var bone in impactedBoneTransforms)
-        {
-            GameObjectHelpers.Create(
-                bone.name,
-                bone.position,
-                bone.rotation,
-                bone.localScale,
-                cutParts.transform,
-                useWorldSpace: false
-            );
-        }
 
         // Desired once we handle the cut on the primary game object
         // for (var childIndex = hitComponent.transform.childCount - 1; childIndex >= 0; childIndex--)

@@ -23,4 +23,52 @@ public static class TransferExtensions
         transform.AddChildrenToList(list);
         return list;
     }
+
+    private static void CloneChildrenTo(
+        this Transform sourceTransform,
+        Transform targetParent,
+        List<Transform> list
+    )
+    {
+        for (var i = 0; i < sourceTransform.childCount; i++)
+        {
+            var sourceChild = sourceTransform.GetChild(i);
+            list.Add(sourceChild);
+            var targetChild = GameObjectHelpers.Create(
+                sourceChild.name,
+                sourceChild.localPosition,
+                sourceChild.localRotation,
+                sourceChild.localScale,
+                targetParent,
+                useWorldSpace: false
+            );
+            sourceChild.CloneChildrenTo(targetChild.transform, list);
+        }
+    }
+
+    public static List<Transform> CloneChildrenTo(
+        this Transform sourceTransform,
+        bool includeSelf,
+        Transform targetParent
+    )
+    {
+        var target = targetParent;
+        var list = new List<Transform>();
+        if (includeSelf)
+        {
+            list.Add(sourceTransform);
+            target = GameObjectHelpers
+                .Create(
+                    sourceTransform.name,
+                    sourceTransform.localPosition,
+                    sourceTransform.localRotation,
+                    sourceTransform.localScale,
+                    targetParent,
+                    useWorldSpace: false
+                )
+                .transform;
+        }
+        sourceTransform.CloneChildrenTo(target, list);
+        return list;
+    }
 }
