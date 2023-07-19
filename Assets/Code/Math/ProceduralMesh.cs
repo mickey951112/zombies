@@ -17,9 +17,9 @@ public class ProceduralMesh
     float3 minVertex = float3.zero;
     float3 maxVertex = float3.zero;
 
-    public ProceduralMesh(string name, int vertexCount, int triangleCount)
+    public ProceduralMesh(int vertexCount, int triangleCount)
     {
-        mesh = new Mesh { name = name };
+        mesh = new Mesh { name = "Generated Mesh" };
 
         meshDataArray = Mesh.AllocateWritableMeshData(1);
         var meshData = meshDataArray[0];

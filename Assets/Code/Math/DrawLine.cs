@@ -5,7 +5,7 @@ public class DrawLine : MonoBehaviour
 {
     void OnEnable()
     {
-        var mesh = new ProceduralMesh("Line", vertexCount: 6, triangleCount: 4);
+        var mesh = new ProceduralMesh(vertexCount: 6, triangleCount: 4);
 
         var leftBottomFront = mesh.AddVertex((position: (0, 0, 0), uv: (0, 0), normal: (-1, 0, 1)));
         var rightBottomFront = mesh.AddVertex((position: (1, 0, 0), uv: (1, 0), normal: (1, 0, 1)));
