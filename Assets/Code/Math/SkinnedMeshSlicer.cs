@@ -3,11 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/* TODO
+ * consider skinned mesh so that we can ragdoll the cut parts
+*/
 public class SkinnedMeshSlicer : MonoBehaviour
 {
     public void Slice(GameObject hitComponent, Vector3 hitPosition)
     {
         var parentGameObject = hitComponent.transform.root.gameObject;
+        var impactedComponents = new List<Transform>();
+        impactedComponents.Add(hitComponent.transform);
+        AddChildren(impactedComponents, hitComponent.transform);
+        Debug.Log($"impactedComponents.Count: {impactedComponents.Count}");
 
         var cutParts = new GameObject($"{gameObject.name}: Cut Parts");
         cutParts.transform.SetPositionAndRotation(
@@ -27,17 +34,16 @@ public class SkinnedMeshSlicer : MonoBehaviour
         var verts = mesh.vertices; // 1029
 
         Transform hitBone = null;
-        int hitBoneIndex = -1;
+        var hitBoneIndexes = new List<int>();
         for (var index = 0; index < renderer.bones.Length; index++)
         {
             hitBone = renderer.bones[index];
-            if (hitBone == hitComponent.transform)
+            if (impactedComponents.Contains(hitBone))
             {
-                hitBoneIndex = index;
-                break;
+                hitBoneIndexes.Add(index);
             }
         }
-        Debug.Log($"found bone {hitBone.name} at index {hitBoneIndex}");
+        Debug.Log($"found bone {hitBone.name}");
         Debug.Log(renderer.rootBone.position);
 
         var impactedVertexIndex = new List<int>();
@@ -45,7 +51,7 @@ public class SkinnedMeshSlicer : MonoBehaviour
         {
             var vert = verts[index];
             var boneWeight = mesh.boneWeights[index];
-            if (boneWeight.boneIndex0 == hitBoneIndex)
+            if (hitBoneIndexes.Contains(boneWeight.boneIndex0))
             {
                 impactedVertexIndex.Add(index);
             }
@@ -109,5 +115,15 @@ public class SkinnedMeshSlicer : MonoBehaviour
         // {
         //     Destroy(hitComponent.transform.GetChild(childIndex).gameObject);
         // }
+    }
+
+    private static void AddChildren(List<Transform> childrenOfHit, Transform transform)
+    {
+        for (var i = 0; i < transform.childCount; i++)
+        {
+            var child = transform.GetChild(i);
+            childrenOfHit.Add(child);
+            AddChildren(childrenOfHit, child);
+        }
     }
 }

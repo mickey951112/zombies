@@ -319,9 +319,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4255266433848115246, guid: df5e18d3d7b2fed41b1bf868b971e89c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255266433848115246, guid: df5e18d3d7b2fed41b1bf868b971e89c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255266433848115246, guid: df5e18d3d7b2fed41b1bf868b971e89c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255266433848115246, guid: df5e18d3d7b2fed41b1bf868b971e89c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
     - target: {fileID: 4255266433848482828, guid: df5e18d3d7b2fed41b1bf868b971e89c, type: 3}
       propertyPath: m_Name
       value: ZombieACharacter (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4255266433858006988, guid: df5e18d3d7b2fed41b1bf868b971e89c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -62,6 +62,13 @@ public class Gun : MonoBehaviour
         {
             DebugDraw.xAtPoint(ray.direction, hit.point, Color.blue);
 
+            // Test custom slicer
+            var customSlicer = hit.collider.GetComponentInParent<SkinnedMeshSlicer>();
+            if (customSlicer)
+            {
+                customSlicer.Slice(hit.collider.gameObject, hit.point);
+            }
+
             var zombie = hit.collider.GetComponentInParent<Zombie>();
             if (zombie)
             {
@@ -79,14 +86,6 @@ public class Gun : MonoBehaviour
             //         null
             //     );
             // }
-
-            // Test custom slicer
-            var customSlicer = hit.collider.GetComponentInParent<SkinnedMeshSlicer>();
-            Debug.Log(hit.collider.name);
-            if (customSlicer)
-            {
-                customSlicer.Slice(hit.collider.gameObject, hit.point);
-            }
         }
 
         OnShotFired();
