@@ -7,7 +7,7 @@ public static class GameObjectHelpers
         string name,
         Vector3? position = null,
         Quaternion? rotation = null,
-        Vector3? localScale = null,
+        Vector3? scale = null,
         Transform parent = null,
         bool useWorldSpace = true
     )
@@ -15,7 +15,7 @@ public static class GameObjectHelpers
         Assert.IsTrue(useWorldSpace || parent != null);
 
         var gameObject = new GameObject(name);
-        gameObject.transform.SetParent(parent);
+        gameObject.transform.SetParent(parent, worldPositionStays: false);
 
         if (useWorldSpace)
         {
@@ -35,18 +35,18 @@ public static class GameObjectHelpers
                 gameObject.transform.rotation = rotation.Value;
             }
 
-            if (localScale.HasValue)
+            if (scale.HasValue)
             {
-                var scale = localScale.Value;
+                var scaleToUse = scale.Value;
                 if (parent != null)
                 {
-                    scale = new Vector3(
-                        scale.x / parent.lossyScale.x,
-                        scale.y / parent.lossyScale.y,
-                        scale.z / parent.lossyScale.z
+                    scaleToUse = new Vector3(
+                        scaleToUse.x / parent.lossyScale.x,
+                        scaleToUse.y / parent.lossyScale.y,
+                        scaleToUse.z / parent.lossyScale.z
                     );
                 }
-                gameObject.transform.localScale = scale;
+                gameObject.transform.localScale = scaleToUse;
             }
         }
         else
@@ -59,9 +59,9 @@ public static class GameObjectHelpers
             {
                 gameObject.transform.localRotation = rotation.Value;
             }
-            if (localScale.HasValue)
+            if (scale.HasValue)
             {
-                gameObject.transform.localScale = localScale.Value;
+                gameObject.transform.localScale = scale.Value;
             }
         }
 

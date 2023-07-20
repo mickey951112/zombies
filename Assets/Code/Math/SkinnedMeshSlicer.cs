@@ -10,7 +10,7 @@ using UnityEngine;
 
 
    rigidbody and collider per impacted bone
-   
+
    x bone transforms
    bone component (joint, rigidbody, collider)
     bone weights
@@ -29,16 +29,19 @@ public class SkinnedMeshSlicer : MonoBehaviour
         // Create cut parts
         (var cutParts, var cutRenderer) = GameObjectHelpers.Create<SkinnedMeshRenderer>(
             $"{gameObject.name}: Cut Parts",
-            hitComponent.transform.position,
-            hitComponent.transform.rotation,
+            hitComponent.transform.root.position,
+            hitComponent.transform.root.rotation,
             hitComponent.transform.lossyScale
         );
         cutRenderer.sharedMaterial = skinnedMeshRenderer.sharedMaterial;
 
+        var childRoot = GameObjectHelpers.Create("Root", parent: cutParts.transform);
+
         // Add bone transforms
         var impactedBoneTransforms = hitComponent.transform.CloneChildrenTo(
             true,
-            cutParts.transform
+            childRoot.transform,
+            CloneComponents
         );
 
         // Gather details
@@ -77,5 +80,36 @@ public class SkinnedMeshSlicer : MonoBehaviour
         // {
         //     Destroy(hitComponent.transform.GetChild(childIndex).gameObject);
         // }
+    }
+
+    private void CloneComponents(Transform sourceTransform, Transform target)
+    {
+        var sourceBody = sourceTransform.GetComponent<Rigidbody>();
+        if (sourceBody != null)
+        {
+            var childBody = target.gameObject.AddComponent<Rigidbody>();
+            childBody.mass = sourceBody.mass;
+            childBody.useGravity = false; // TODO
+        }
+
+        var sourceSphereCollider = sourceTransform.GetComponent<SphereCollider>();
+        if (sourceSphereCollider != null)
+        {
+            var childCollider = target.gameObject.AddComponent<SphereCollider>();
+            childCollider.center = sourceSphereCollider.center;
+            childCollider.radius = sourceSphereCollider.radius;
+            childCollider.isTrigger = true; // TODO disable
+        }
+
+        var sourceCapsuleCollider = sourceTransform.GetComponent<CapsuleCollider>();
+        if (sourceCapsuleCollider != null)
+        {
+            var childCollider = target.gameObject.AddComponent<CapsuleCollider>();
+            childCollider.center = sourceCapsuleCollider.center;
+            childCollider.radius = sourceCapsuleCollider.radius;
+            childCollider.height = sourceCapsuleCollider.height;
+            childCollider.direction = sourceCapsuleCollider.direction;
+            childCollider.isTrigger = true; // TODO disable
+        }
     }
 }
