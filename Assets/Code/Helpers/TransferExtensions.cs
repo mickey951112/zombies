@@ -26,28 +26,17 @@ public static class TransferExtensions
     }
 
     private static void CloneChildrenTo(
-        this Transform sourceTransform,
+        this Transform sourceParent,
         Transform targetParent,
         List<Transform> list,
         Action<Transform, Transform> callbackPerChild
     )
     {
-        for (var i = 0; i < sourceTransform.childCount; i++)
+        for (var i = 0; i < sourceParent.childCount; i++)
         {
-            var sourceChild = sourceTransform.GetChild(i);
-            list.Add(sourceChild);
-            var targetChild = GameObjectHelpers
-                .Create(
-                    sourceChild.name,
-                    sourceChild.localPosition,
-                    sourceChild.localRotation,
-                    sourceChild.localScale,
-                    targetParent,
-                    useWorldSpace: false
-                )
-                .transform;
-            callbackPerChild(sourceChild, targetChild);
-            sourceChild.CloneChildrenTo(targetChild, list, callbackPerChild);
+            var sourceTransform = sourceParent.GetChild(i);
+            var targetChild = NewMethod(sourceTransform, targetParent, callbackPerChild, list);
+            sourceTransform.CloneChildrenTo(targetChild, list, callbackPerChild);
         }
     }
 
@@ -58,24 +47,35 @@ public static class TransferExtensions
         Action<Transform, Transform> callbackPerChild
     )
     {
-        var target = targetParent;
+        var targetChild = targetParent;
         var list = new List<Transform>();
         if (includeSelf)
         {
-            list.Add(sourceTransform);
-            target = GameObjectHelpers
-                .Create(
-                    sourceTransform.name,
-                    sourceTransform.localPosition,
-                    sourceTransform.localRotation,
-                    sourceTransform.localScale,
-                    targetParent,
-                    useWorldSpace: false
-                )
-                .transform;
-            callbackPerChild(sourceTransform, target);
+            targetChild = NewMethod(sourceTransform, targetParent, callbackPerChild, list);
         }
-        sourceTransform.CloneChildrenTo(target, list, callbackPerChild);
+        sourceTransform.CloneChildrenTo(targetChild, list, callbackPerChild);
         return list;
+    }
+
+    private static Transform NewMethod(
+        Transform sourceTransform,
+        Transform targetParent,
+        Action<Transform, Transform> callbackPerChild,
+        List<Transform> list
+    )
+    {
+        list.Add(sourceTransform);
+        var target = GameObjectHelpers
+            .Create(
+                sourceTransform.name,
+                sourceTransform.localPosition,
+                sourceTransform.localRotation,
+                sourceTransform.localScale,
+                targetParent,
+                useWorldSpace: false
+            )
+            .transform;
+        callbackPerChild(sourceTransform, target);
+        return target;
     }
 }

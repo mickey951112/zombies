@@ -35,7 +35,12 @@ public class SkinnedMeshSlicer : MonoBehaviour
         );
         cutRenderer.sharedMaterial = skinnedMeshRenderer.sharedMaterial;
 
-        var childRoot = GameObjectHelpers.Create("Root", parent: cutParts.transform);
+        var childRoot = GameObjectHelpers.Create(
+            "Root",
+            hitComponent.transform.parent.position,
+            hitComponent.transform.parent.rotation,
+            parent: cutParts.transform
+        );
 
         // Add bone transforms
         var impactedBoneTransforms = hitComponent.transform.CloneChildrenTo(
