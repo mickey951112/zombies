@@ -36,7 +36,9 @@ public class SkinnedMeshSlicer : MonoBehaviour
 
         (_, var cutRenderer) = GameObjectHelpers.Create<SkinnedMeshRenderer>(
             "Renderer",
-            rotation: Quaternion.Euler(-90, 0, 0), // TODO read from their renderer instead?
+            rotation: hitComponent.transform.root
+                .GetComponentInChildren<SkinnedMeshRenderer>()
+                .transform.rotation,
             parent: cutParts.transform
         );
         cutRenderer.sharedMaterial = skinnedMeshRenderer.sharedMaterial;
