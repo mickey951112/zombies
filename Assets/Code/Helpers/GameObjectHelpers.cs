@@ -72,11 +72,12 @@ public static class GameObjectHelpers
         string name,
         Vector3? position = null,
         Quaternion? rotation = null,
-        Vector3? localScale = null
+        Vector3? localScale = null,
+        Transform parent = null
     )
         where T : Component
     {
-        var gameObject = Create(name, position, rotation, localScale);
+        var gameObject = Create(name, position, rotation, localScale, parent);
         var component1 = gameObject.AddComponent<T>();
         return (gameObject, component1);
     }
@@ -85,12 +86,13 @@ public static class GameObjectHelpers
         string name,
         Vector3? position = null,
         Quaternion? rotation = null,
-        Vector3? localScale = null
+        Vector3? localScale = null,
+        Transform parent = null
     )
         where T1 : Component
         where T2 : Component
     {
-        var gameObject = Create(name, position, rotation, localScale);
+        var gameObject = Create(name, position, rotation, localScale, parent);
         var component1 = gameObject.AddComponent<T1>();
         var component2 = gameObject.AddComponent<T2>();
         return (gameObject, component1, component2);

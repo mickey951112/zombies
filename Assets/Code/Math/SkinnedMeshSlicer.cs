@@ -27,11 +27,17 @@ public class SkinnedMeshSlicer : MonoBehaviour
     public void Slice(GameObject hitComponent, Vector3 hitPosition)
     {
         // Create cut parts
-        (var cutParts, var cutRenderer) = GameObjectHelpers.Create<SkinnedMeshRenderer>(
+        var cutParts = GameObjectHelpers.Create(
             $"{gameObject.name}: Cut Parts",
             hitComponent.transform.root.position,
             hitComponent.transform.root.rotation,
             hitComponent.transform.lossyScale
+        );
+
+        (_, var cutRenderer) = GameObjectHelpers.Create<SkinnedMeshRenderer>(
+            "Renderer",
+            rotation: Quaternion.Euler(-90, 0, 0), // TODO read from their renderer instead?
+            parent: cutParts.transform
         );
         cutRenderer.sharedMaterial = skinnedMeshRenderer.sharedMaterial;
 
