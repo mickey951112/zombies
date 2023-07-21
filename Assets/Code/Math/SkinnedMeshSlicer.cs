@@ -26,6 +26,8 @@ public class SkinnedMeshSlicer : MonoBehaviour
 
     public void Slice(GameObject hitComponent, Vector3 hitPosition)
     {
+        var slideForwardBy = new Vector3(0, 0, 2);
+
         // Create cut parts
         var cutParts = GameObjectHelpers.Create(
             $"{gameObject.name}: Cut Parts",
@@ -93,6 +95,8 @@ public class SkinnedMeshSlicer : MonoBehaviour
         // {
         //     Destroy(hitComponent.transform.GetChild(childIndex).gameObject);
         // }
+
+        cutParts.transform.position += slideForwardBy;
     }
 
     private void CloneComponents(Transform sourceTransform, Transform target)
