@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public static class TransferExtensions
 {
@@ -28,19 +29,26 @@ public static class TransferExtensions
     private static void CloneChildrenTo(
         this Transform sourceParent,
         Transform targetParent,
-        List<Transform> list,
+        List<Transform> sourceList,
+        List<Transform> cloneList,
         Action<Transform, Transform> callbackPerChild
     )
     {
         for (var i = 0; i < sourceParent.childCount; i++)
         {
             var sourceTransform = sourceParent.GetChild(i);
-            var targetChild = NewMethod(sourceTransform, targetParent, callbackPerChild, list);
-            sourceTransform.CloneChildrenTo(targetChild, list, callbackPerChild);
+            var targetChild = NewMethod(
+                sourceTransform,
+                targetParent,
+                callbackPerChild,
+                sourceList,
+                cloneList
+            );
+            sourceTransform.CloneChildrenTo(targetChild, sourceList, cloneList, callbackPerChild);
         }
     }
 
-    public static List<Transform> CloneChildrenTo(
+    public static (List<Transform> source, List<Transform> clone) CloneChildrenTo(
         this Transform sourceTransform,
         bool includeSelf,
         Transform targetParent,
@@ -48,23 +56,33 @@ public static class TransferExtensions
     )
     {
         var targetChild = targetParent;
-        var list = new List<Transform>();
+        var sourceList = new List<Transform>();
+        var cloneList = new List<Transform>();
         if (includeSelf)
         {
-            targetChild = NewMethod(sourceTransform, targetParent, callbackPerChild, list);
+            targetChild = NewMethod(
+                sourceTransform,
+                targetParent,
+                callbackPerChild,
+                sourceList,
+                cloneList
+            );
         }
-        sourceTransform.CloneChildrenTo(targetChild, list, callbackPerChild);
-        return list;
+        sourceTransform.CloneChildrenTo(targetChild, sourceList, cloneList, callbackPerChild);
+
+        Assert.AreEqual(sourceList.Count, cloneList.Count);
+        return (sourceList, cloneList);
     }
 
     private static Transform NewMethod(
         Transform sourceTransform,
         Transform targetParent,
         Action<Transform, Transform> callbackPerChild,
-        List<Transform> list
+        List<Transform> sourceList,
+        List<Transform> cloneList
     )
     {
-        list.Add(sourceTransform);
+        sourceList.Add(sourceTransform);
         var target = GameObjectHelpers
             .Create(
                 sourceTransform.name,
@@ -75,6 +93,7 @@ public static class TransferExtensions
                 useWorldSpace: false
             )
             .transform;
+        cloneList.Add(target);
         callbackPerChild(sourceTransform, target);
         return target;
     }
